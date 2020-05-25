@@ -1,6 +1,5 @@
 package com.ruijin.thread;
 
-import com.sun.xml.internal.ws.util.CompletedFuture;
 import org.junit.Test;
 
 import java.util.concurrent.*;
@@ -34,10 +33,11 @@ public class CompletedFutureExample {
     @Test
     public void testThenApply() throws InterruptedException, ExecutionException {
         CompletableFuture future = CompletableFuture.completedFuture("hello world").thenApply(s -> {
-                    assertFalse(Thread.currentThread().isDaemon());
+                    //this is not async, it will block the main thread
+                    assertFalse(Thread.currentThread().isDaemon()); // this is main thread not daemon.
                     try {
                         System.out.println("The current thread name is : " + Thread.currentThread().getName());
-                        Thread.sleep(3000);
+                        Thread.sleep(30000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -101,6 +101,7 @@ public class CompletedFutureExample {
     @Test
     public void testApplyAccept() throws InterruptedException, ExecutionException {
         CompletableFuture future = CompletableFuture.completedFuture("hello world").thenAccept(s -> {
+                    // this is not async, the main thread will execute here rather than a daemon
                     assertFalse(Thread.currentThread().isDaemon());
                     try {
                         System.out.println(Thread.currentThread().getName());
